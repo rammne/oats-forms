@@ -93,7 +93,7 @@ class _HomePageState extends State<HomePage> {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => QuestionsPage(userInformation: userInfo),
+          builder: (context) => AlumniTrackingForm(userInformation: userInfo),
         ),
       );
     }

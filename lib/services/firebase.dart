@@ -24,7 +24,7 @@ class FirestoreService {
     String middleName,
     String dateOfBirth,
     String occupation, {
-    String? question_1,
+    List? question_1,
     String? question_2,
     String? question_3,
     String? question_4,
@@ -73,7 +73,7 @@ class FirestoreService {
 
   Future updateResponse(
     String docID,
-    String? question_1,
+    List? question_1,
     String? question_2,
     String? question_3,
     String? question_4,
