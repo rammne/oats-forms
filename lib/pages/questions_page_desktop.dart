@@ -25,7 +25,7 @@ class _AlumniTrackingFormState extends State<AlumniTrackingForm> {
 
   // Form Controllers
   late Map<String, TextEditingController> _questionControllers;
-  
+
   late Map<String, int> _question1Stats;
   late Map<String, int> _question2Stats;
   late Map<String, int> _question3Stats;
@@ -37,6 +37,9 @@ class _AlumniTrackingFormState extends State<AlumniTrackingForm> {
 
   // Alumni Inputs
   late final Map information = widget.userInformation;
+
+  // Alumni Skills
+  final List<String> _alumniSkills = [];
 
   // Skills Selection
   final Map<String, bool> _skillsMap = {
@@ -79,7 +82,6 @@ class _AlumniTrackingFormState extends State<AlumniTrackingForm> {
 
   void _initializeControllers() {
     _questionControllers = {
-      'skills': TextEditingController(),
       'skill_impact': TextEditingController(),
       'job_alignment': TextEditingController(),
       'employment_duration': TextEditingController(),
@@ -142,7 +144,7 @@ class _AlumniTrackingFormState extends State<AlumniTrackingForm> {
       children: [
         Text(
           'Select Your Life Skills ($_selectedSkillsCount/$_kMaxSkillSelections)',
-          style: Theme.of(context).textTheme.titleMedium,
+          style: const TextStyle(fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 12),
         Wrap(
@@ -234,23 +236,33 @@ class _AlumniTrackingFormState extends State<AlumniTrackingForm> {
     setState(() => _isSubmitting = true);
 
     try {
-    final DocumentReference document = alumni.alumni.doc();
-    final String documentID = document.id;
+      final DocumentReference document = alumni.alumni.doc();
+      final String documentID = document.id;
 
-    // Set the new alumni document
-    await _setAlumniDocument(document);
+      _skillsMap.forEach(
+        (key, value) {
+          if (value) {
+            _alumniSkills.add(key);
+          }
+        },
+      );
 
-    // Update graduation year statistics
-    await _updateYearStats();
+      await _updateQuestion1Stats();
 
-    // Update question statistics
-    await _updateQuestionStats('question_2', _question2Stats);
+      // Set the new alumni document
+      await _setAlumniDocument(document);
 
-    await _updateQuestionStats('question_3', _question3Stats);
+      // Update graduation year statistics
+      await _updateYearStats();
 
-    await _updateQuestionStats('question_5', _question5Stats);
+      // Update question statistics
+      await _updateQuestionStats('question_2', _question2Stats);
 
-    await _updateQuestionStats('question_6', _question6Stats);
+      await _updateQuestionStats('question_3', _question3Stats);
+
+      await _updateQuestionStats('question_5', _question5Stats);
+
+      await _updateQuestionStats('question_6', _question6Stats);
 
       Navigator.pushReplacement(
         context,
@@ -304,13 +316,14 @@ class _AlumniTrackingFormState extends State<AlumniTrackingForm> {
       'occupation': information['occupation'],
       'searchable_name':
           setSearchParam(information['first_name'], information['last_name']),
-      'question_1': _questionControllers['skills'],
-      'question_2': _questionControllers['skill_impact'],
-      'question_3': _questionControllers['job_alignment'],
-      'question_4': _questionControllers['employment_duration'],
-      'question_5': _questionControllers['program_match'],
-      'question_6': _questionControllers['job_satisfaction'],
+      'question_1': _alumniSkills,
+      'question_2': _questionControllers['skill_impact']!.text,
+      'question_3': _questionControllers['job_alignment']!.text,
+      'question_4': _questionControllers['employment_duration']!.text,
+      'question_5': _questionControllers['program_match']!.text,
+      'question_6': _questionControllers['job_satisfaction']!.text,
     });
+    print('success1');
   }
 
   // Function to update year-based statistics
@@ -322,18 +335,42 @@ class _AlumniTrackingFormState extends State<AlumniTrackingForm> {
 
       if (yearData.exists) {
         await documentStats.update({'value': yearData.get('value') + 1});
+        print('success2');
       } else {
         await documentStats.set({
           'value': 1,
           'year': int.parse(information['year_graduated']),
         });
+        print('success2');
       }
     } catch (e) {
       print('Error updating year stats: $e');
     }
   }
 
-// Function to update question statistics (for question_2, question_3, etc.)
+  // Function to update the stats of the alumni from question 1
+  Future<void> _updateQuestion1Stats() async {
+    try {
+      final CollectionReference collectionRef =
+          FirebaseFirestore.instance.collection('question_1');
+
+      for (String skill in _alumniSkills) {
+        final DocumentReference skillDoc = collectionRef.doc(skill);
+
+        final DocumentSnapshot skillSnapshot = await skillDoc.get();
+
+        if (skillSnapshot.exists) {
+          await skillDoc.update({
+            'count': (skillSnapshot.data() as Map<String, dynamic>)['count'] + 1
+          });
+        }
+      }
+    } catch (e) {
+      print('Error updating question 1 stats: $e');
+    }
+  }
+
+  // Function to update question statistics (for question_2, question_3, etc.)
   Future<void> _updateQuestionStats(
       String questionId, Map<String, int> stats) async {
     try {
@@ -350,6 +387,7 @@ class _AlumniTrackingFormState extends State<AlumniTrackingForm> {
         'strongly_disagree':
             qDoc.get('strongly_disagree') + stats['strongly_disagree'],
       });
+      print('success3');
     } catch (e) {
       print('Error updating $questionId stats: ${e}');
     }
@@ -380,10 +418,10 @@ class _AlumniTrackingFormState extends State<AlumniTrackingForm> {
                 ),
                 const SizedBox(height: 20),
                 _buildDropdownQuestion(
-                    title: 'Time taken to land first job after graduation',
-                    controllerKey: 'employment_duration',
-                    options: _employmentDurationOptions,
-                  ),
+                  title: 'Time taken to land first job after graduation',
+                  controllerKey: 'employment_duration',
+                  options: _employmentDurationOptions,
+                ),
                 const SizedBox(height: 20),
                 if (widget.userInformation['employment_status'] !=
                     'Others') ...[
@@ -393,7 +431,6 @@ class _AlumniTrackingFormState extends State<AlumniTrackingForm> {
                     options: _likertScaleOptions,
                   ),
                   const SizedBox(height: 20),
-                  
                   const SizedBox(height: 20),
                   _buildDropdownQuestion(
                       title:
