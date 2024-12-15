@@ -256,9 +256,7 @@ class AlumniFeedbackSection extends StatelessWidget {
         ),
         Align(
           alignment: Alignment.centerRight,
-          child: AnswerCard(
-            answer: alumniData['question_1'],
-          ),
+          child: Text("${alumniData["question_1"]}"),
         ),
         QuestionCard(
           question: 'How did these skills help you in pursuing your career path?',
