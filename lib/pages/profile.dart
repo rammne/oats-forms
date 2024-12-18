@@ -256,7 +256,25 @@ class AlumniFeedbackSection extends StatelessWidget {
         ),
         Align(
           alignment: Alignment.centerRight,
-          child: Text("${alumniData["question_1"]}"),
+          child: Container(
+            margin: EdgeInsets.symmetric(vertical: 8),
+            padding: EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              border: Border.all(
+                width: 0.5
+              ),
+              color: Colors.grey[100],
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+
+                SizedBox(height: 8),
+                Text("${alumniData['question_1'].join(', ')}"),
+              ],
+            )
+          )
         ),
         QuestionCard(
           question: 'How did these skills help you in pursuing your career path?',
