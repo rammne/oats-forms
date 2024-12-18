@@ -402,71 +402,76 @@ class _AlumniTrackingFormState extends State<AlumniTrackingForm> {
         backgroundColor: _kPrimaryColor,
       ),
       body: SafeArea(
-        child: SizedBox(
-          child: Form(
-            key: _formKey,
-            child: ListView(
-              padding: const EdgeInsets.all(16.0),
-              children: [
-                _buildSkillsSelection(),
-                const SizedBox(height: 20),
-                _buildDropdownQuestion(
-                  title:
-                      'The skills you\'ve highlighted helped you in pursuing your career path.',
-                  controllerKey: 'skill_impact',
-                  options: _likertScaleOptions,
-                ),
-                const SizedBox(height: 20),
-                _buildDropdownQuestion(
-                  title: 'Time taken to land first job after graduation',
-                  controllerKey: 'employment_duration',
-                  options: _employmentDurationOptions,
-                ),
-                const SizedBox(height: 20),
-                if (widget.userInformation['employment_status'] !=
-                    'Others') ...[
-                  _buildDropdownQuestion(
-                    title: 'Your first job aligns with your current job',
-                    controllerKey: 'job_alignment',
-                    options: _likertScaleOptions,
-                  ),
-                  const SizedBox(height: 20),
-                  const SizedBox(height: 20),
-                  _buildDropdownQuestion(
-                      title:
-                          'The program you took in OLOPSC matches your current job.',
-                      controllerKey: 'program_match',
-                      options: _likertScaleOptions),
-                  const SizedBox(height: 20),
-                  _buildDropdownQuestion(
-                      title: 'You are satisfied with your current job.',
-                      controllerKey: 'job_satisfaction',
-                      options: _likertScaleOptions),
-                  const SizedBox(height: 20),
-                ],
-                SizedBox(
-                  width: 450,
-                  child: ElevatedButton(
-                    onPressed: _selectedSkillsCount >= _kMinSkillSelections &&
-                            !_isSubmitting
-                        ? _submitForm
-                        : null,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue[300],
-                      minimumSize: const Size(double.infinity, 50),
-                    ),
-                    child: _isSubmitting
-                        ? const CircularProgressIndicator(color: Colors.white)
-                        : const Text(
-                            'Submit',
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontWeight: FontWeight.bold,
-                            ),
+        child: Center(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(16.0),
+            child: Card(
+              elevation: 8,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(15),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      _buildSkillsSelection(),
+                      const SizedBox(height: 20),
+                      _buildDropdownQuestion(
+                        title:
+                            'The skills you\'ve highlighted helped you in pursuing your career path.',
+                        controllerKey: 'skill_impact',
+                        options: _likertScaleOptions,
+                      ),
+                      const SizedBox(height: 20),
+                      _buildDropdownQuestion(
+                        title: 'Time taken to land first job after graduation',
+                        controllerKey: 'employment_duration',
+                        options: _employmentDurationOptions,
+                      ),
+                      const SizedBox(height: 20),
+                      if (widget.userInformation['employment_status'] !=
+                          'Others') ...[
+                        _buildDropdownQuestion(
+                          title: 'Your first job aligns with your current job',
+                          controllerKey: 'job_alignment',
+                          options: _likertScaleOptions,
+                        ),
+                        const SizedBox(height: 20),
+                        _buildDropdownQuestion(
+                            title:
+                                'The program you took in OLOPSC matches your current job.',
+                            controllerKey: 'program_match',
+                            options: _likertScaleOptions),
+                        const SizedBox(height: 20),
+                        _buildDropdownQuestion(
+                            title: 'You are satisfied with your current job.',
+                            controllerKey: 'job_satisfaction',
+                            options: _likertScaleOptions),
+                        const SizedBox(height: 20),
+                      ],
+                      const SizedBox(height: 30),
+                      ElevatedButton(
+                        onPressed: _isSubmitting ? null : _submitForm,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.blue,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
                           ),
+                        ),
+                        child: _isSubmitting
+                            ? const CircularProgressIndicator(
+                                valueColor:
+                                    AlwaysStoppedAnimation<Color>(Colors.white),
+                              )
+                            : const Text('Submit'),
+                      ),
+                    ],
                   ),
                 ),
-              ],
+              ),
             ),
           ),
         ),
