@@ -249,10 +249,22 @@ class _HomePageState extends State<HomePage> {
           // Program Dropdown
           DropdownButtonFormField2(
             decoration: _dropdownDecoration('Degree Program'),
+            isExpanded: true, // Ensures the dropdown takes full width
+
+            style: TextStyle(
+              overflow: TextOverflow.fade, // Softer fade-out for long text
+              fontSize: 16, // Adjust font size as needed
+            ),
             items: _dropdownData['programs']!
                 .map((item) => DropdownMenuItem(
                       value: item,
-                      child: Text(item, overflow: TextOverflow.ellipsis),
+                      child: Text(
+                        item,
+                        maxLines: 1, // Restrict to single line
+                        overflow:
+                            TextOverflow.ellipsis, // Ellipsis for long text
+                        softWrap: false, // Prevent wrapping
+                      ),
                     ))
                 .toList(),
             onChanged: (value) =>
@@ -295,13 +307,13 @@ class _HomePageState extends State<HomePage> {
             onPressed: _submitForm,
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color.fromRGBO(11, 10, 95, 1),
-              foregroundColor: const Color.fromRGBO(255, 210, 49, 1),
+              foregroundColor: const Color.fromARGB(255, 253, 216, 83),
               minimumSize: const Size(double.infinity, 50),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(20),
               ),
             ),
-            child: const Text('Next'),
+            child: const Text('NEXT'),
           ),
         ],
       ),
@@ -323,10 +335,14 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color.fromRGBO(255, 210, 49, 1),
+      backgroundColor: const Color.fromARGB(255, 253, 216, 83),
       appBar: AppBar(
-        backgroundColor: const Color.fromRGBO(255, 210, 49, 1),
-        title: const Text('OLOPSC Alumni Tracking System (OATS)'),
+        iconTheme: IconThemeData(
+          color: Color.fromARGB(255, 253, 216, 83),
+        ),
+        backgroundColor: const Color.fromRGBO(11, 10, 95, 1),
+        title: const Text('OLOPSC Alumni Tracking System (OATS)',
+        style: TextStyle(color: Color.fromARGB(255, 253, 216, 83)),) ,
       ),
       body: ResponsiveLayout(
         desktopBody: SingleChildScrollView(

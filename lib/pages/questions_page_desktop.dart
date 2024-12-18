@@ -21,7 +21,7 @@ class _AlumniTrackingFormState extends State<AlumniTrackingForm> {
   // Constants
   static const _kMaxSkillSelections = 5;
   static const _kMinSkillSelections = 3;
-  static const _kPrimaryColor = Color(0xFFFFD231);
+  static const _kPrimaryColor = Color.fromARGB(255, 253, 216, 83);
 
   // Form Controllers
   late Map<String, TextEditingController> _questionControllers;
@@ -156,7 +156,7 @@ class _AlumniTrackingFormState extends State<AlumniTrackingForm> {
               selected: _skillsMap[skill]!,
               onSelected: (selected) => _toggleSkillSelection(skill, selected),
               selectedColor: _kPrimaryColor.withOpacity(0.3),
-              checkmarkColor: Colors.blue,
+              checkmarkColor: const Color.fromRGBO(11, 10, 95, 1),
             );
           }).toList(),
         ),
@@ -398,8 +398,11 @@ class _AlumniTrackingFormState extends State<AlumniTrackingForm> {
     return Scaffold(
       backgroundColor: _kPrimaryColor,
       appBar: AppBar(
-        title: const Text('Alumni Tracking System'),
-        backgroundColor: _kPrimaryColor,
+        iconTheme: IconThemeData(
+          color: Color.fromARGB(255, 253, 216, 83),
+        ),
+        title: const Text('Alumni Tracking System', style: TextStyle(color: const Color.fromARGB(255, 253, 216, 83))),
+        backgroundColor: Color.fromRGBO(11, 10, 95, 1),
       ),
       body: SafeArea(
         child: Center(
@@ -459,16 +462,15 @@ class _AlumniTrackingFormState extends State<AlumniTrackingForm> {
                         ? _submitForm
                         : null,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue[300],
+                      backgroundColor: const Color.fromRGBO(11, 10, 95, 1),
                       minimumSize: const Size(double.infinity, 50),
                     ),
                     child: _isSubmitting
                         ? const CircularProgressIndicator(color: Colors.white)
                         : const Text(
-                            'Submit',
+                            'SUBMIT',
                             style: TextStyle(
-                              color: Colors.black,
-                              fontWeight: FontWeight.bold,
+                              color: Color.fromARGB(255, 253, 216, 83),
                             ),
                           ),
                   ),

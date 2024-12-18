@@ -14,11 +14,11 @@ const _navBarItems = [
   BottomNavigationBarItem(
     icon: Icon(
       Icons.person_outline_rounded,
-      color: const Color.fromRGBO(255, 210, 49, 1),
+      color: Color.fromARGB(255, 120, 120, 120),
     ),
     activeIcon: Icon(
       Icons.person_rounded,
-      color: const Color.fromRGBO(255, 210, 49, 1),
+      color: Color.fromARGB(255, 60, 60, 60),
     ),
     label: 'Profile',
 
@@ -26,11 +26,11 @@ const _navBarItems = [
   BottomNavigationBarItem(
     icon: Icon(
       Icons.info_outline,
-      color: const Color.fromRGBO(255, 210, 49, 1),
+      color: Color.fromARGB(255, 120, 120, 120),
     ),
     activeIcon: Icon(
       Icons.info,
-      color: const Color.fromRGBO(255, 210, 49, 1),
+      color: Color.fromARGB(255, 60, 60, 60),
     ),
     label: 'About',
   ),
@@ -64,9 +64,9 @@ class _NavigationPageState extends State<NavigationPage> {
     return Scaffold(
       bottomNavigationBar: isSmallScreen
           ? BottomNavigationBar(
-              backgroundColor: const Color.fromRGBO(11, 10, 95, 1),
-              unselectedItemColor: const Color.fromRGBO(255, 210, 49, 1),
-              selectedItemColor: const Color.fromRGBO(255, 210, 49, 1),
+              backgroundColor: const Color.fromARGB(255, 240, 240, 240),
+              unselectedItemColor: const Color.fromARGB(255, 120, 120, 120),
+              selectedItemColor: const Color.fromARGB(255, 60, 60, 60),
               selectedLabelStyle: const TextStyle(
                 fontSize: 15
               ),
@@ -86,7 +86,7 @@ class _NavigationPageState extends State<NavigationPage> {
         children: <Widget>[
           if (!isSmallScreen)
             NavigationRail(
-              backgroundColor: Color.fromRGBO(11, 10, 95, 1),
+              backgroundColor: Color.fromRGBO(245, 245, 245, 1),
               //leading start
               leading: Center(
                 child: Container(
@@ -104,14 +104,14 @@ class _NavigationPageState extends State<NavigationPage> {
                         style: TextStyle(
                             fontSize: 11,
                             fontWeight: FontWeight.bold,
-                            color: const Color.fromRGBO(255, 210, 49, 1)),
+                            color: Color.fromRGBO(60, 60, 60, 1)),
                       ),
                       const Text(
                         'Alumni Tracking System',
                         style: TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
-                            color: const Color.fromRGBO(255, 210, 49, 1)),
+                            color: Color.fromRGBO(60, 60, 60, 1)),
                       ),
                     ],
                   ),
@@ -131,8 +131,9 @@ class _NavigationPageState extends State<NavigationPage> {
                       selectedIcon: item.activeIcon,
                       label: Text(
                         item.label!,
+                        // TEXT ITO
                         style: TextStyle(
-                            color: const Color.fromRGBO(255, 210, 49, 1),
+                            color: Color.fromARGB(255, 60, 60, 60),
                             fontSize: 15),
                       )))
                   .toList(),

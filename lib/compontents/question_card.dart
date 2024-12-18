@@ -31,7 +31,7 @@ class QuestionCard extends StatelessWidget {
               fontWeight: FontWeight.w600,
             ),
           ),
-          SizedBox(height: 8),
+          SizedBox(height: 4),
         ],
       ),
     );

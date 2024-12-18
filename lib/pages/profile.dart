@@ -27,6 +27,7 @@ class ProfileScreen extends StatelessWidget {
             return Container(
               decoration: BoxDecoration(
                 image: DecorationImage(
+                  colorFilter: ColorFilter.mode(Colors.white, BlendMode.srcATop),
                   image: NetworkImage(
                     'https://lh3.googleusercontent.com/d/1A9nZdV4Y4kXErJlBOkahkpODE7EVhp1x'
                   ),
@@ -52,14 +53,15 @@ class ProfileScreen extends StatelessWidget {
       expandedHeight: 120,
       floating: false,
       pinned: true,
-      backgroundColor: AppColors.primary,
+      automaticallyImplyLeading: false,
+      backgroundColor:  const Color.fromRGBO(11, 10, 95, 1),
       flexibleSpace: FlexibleSpaceBar(
         title: Text(
           'Welcome ${alumniData['last_name']}, ${alumniData['first_name']}!',
           style: const TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.bold,
-            color: Colors.black,
+            color: Colors.white,
           ),
         ),
         centerTitle: true,
@@ -179,7 +181,6 @@ class ProfileScreen extends StatelessWidget {
   }
   }
 
-
 class ProfileSection extends StatelessWidget {
   final dynamic alumniData;
 
@@ -271,7 +272,7 @@ class AlumniFeedbackSection extends StatelessWidget {
               children: [
 
                 SizedBox(height: 8),
-                Text("${alumniData['question_1'].join(', ')}"),
+                Text("${alumniData['question_1'].join(', ')}", textAlign: TextAlign.right,),
               ],
             )
           )

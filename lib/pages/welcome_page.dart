@@ -22,7 +22,7 @@ class _WelcomePageState extends State<WelcomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFFFD231),
+      backgroundColor: const Color.fromARGB(255, 253, 216, 83),
       appBar: _buildAppBar(),
       body: SingleChildScrollView(
         child: Column(
@@ -55,18 +55,18 @@ class _WelcomePageState extends State<WelcomePage> {
 
   AppBar _buildAppBar() {
     return AppBar(
-      backgroundColor: const Color(0xFFFFD231),
+      backgroundColor: const Color.fromRGBO(11, 10, 95, 1),
       title: const Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             'OLOPSC Alumni Form',
-            style: TextStyle(fontSize: 18),
+            style: TextStyle(fontSize: 18, color: const Color.fromARGB(255, 253, 216, 83)),
           ),
           SizedBox(height: 4),
           Text(
             'OLOPSC Alumni Tracking System (OATS)',
-            style: TextStyle(fontSize: 14),
+            style: TextStyle(fontSize: 14, color: const Color.fromARGB(255, 253, 216, 83)),
           ),
         ],
       ),

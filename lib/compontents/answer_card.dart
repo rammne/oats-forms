@@ -12,7 +12,7 @@ class AnswerCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       margin: EdgeInsets.symmetric(vertical: 8),
-      padding: EdgeInsets.all(12),
+      padding: EdgeInsets.all(8),
       decoration: BoxDecoration(
         border: Border.all(
           width: 0.5
@@ -23,8 +23,7 @@ class AnswerCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-
-          SizedBox(height: 8),
+          SizedBox(height: 4),
           Text(
             answer.isNotEmpty ? answer : 'No response',
             style: TextStyle(
