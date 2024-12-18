@@ -454,20 +454,24 @@ class _AlumniTrackingFormState extends State<AlumniTrackingForm> {
                       ],
                       const SizedBox(height: 30),
                       ElevatedButton(
-                        onPressed: _isSubmitting ? null : _submitForm,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.blue,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
+                    onPressed: _selectedSkillsCount >= _kMinSkillSelections &&
+                            !_isSubmitting
+                        ? _submitForm
+                        : null,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blue[300],
+                      minimumSize: const Size(double.infinity, 50),
+                    ),
+                    child: _isSubmitting
+                        ? const CircularProgressIndicator(color: Colors.white)
+                        : const Text(
+                            'Submit',
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
-                        ),
-                        child: _isSubmitting
-                            ? const CircularProgressIndicator(
-                                valueColor:
-                                    AlwaysStoppedAnimation<Color>(Colors.white),
-                              )
-                            : const Text('Submit'),
-                      ),
+                  ),
                     ],
                   ),
                 ),
