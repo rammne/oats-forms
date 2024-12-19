@@ -64,9 +64,9 @@ class _NavigationPageState extends State<NavigationPage> {
     return Scaffold(
       bottomNavigationBar: isSmallScreen
           ? BottomNavigationBar(
-              backgroundColor: const Color.fromARGB(255, 240, 240, 240),
+              backgroundColor: const Color(0xFF0b0a5f),
               unselectedItemColor: const Color.fromARGB(255, 120, 120, 120),
-              selectedItemColor: const Color.fromARGB(255, 60, 60, 60),
+              selectedItemColor: const Color.fromARGB(255, 250, 244, 244),
               selectedLabelStyle: const TextStyle(
                 fontSize: 15
               ),
@@ -86,7 +86,7 @@ class _NavigationPageState extends State<NavigationPage> {
         children: <Widget>[
           if (!isSmallScreen)
             NavigationRail(
-              backgroundColor: Color.fromRGBO(245, 245, 245, 1),
+              backgroundColor: const Color(0xFF0b0a5f),
               //leading start
               leading: Center(
                 child: Container(
@@ -94,7 +94,7 @@ class _NavigationPageState extends State<NavigationPage> {
                   child: Column(
                     children: [
                       Image.network(
-                          'https://lh3.googleusercontent.com/d/1XMP5QKXyZKjaFupHFRQ0HjRdety1Kb5N',
+                          'https://lh3.googleusercontent.com/d/1CcRXI71dz-jmNoZF_JZ2T0cq9NuyNq6t',
                           scale: 12),
                       const SizedBox(
                         height: 15,
@@ -104,14 +104,14 @@ class _NavigationPageState extends State<NavigationPage> {
                         style: TextStyle(
                             fontSize: 11,
                             fontWeight: FontWeight.bold,
-                            color: Color.fromRGBO(60, 60, 60, 1)),
+                            color: Color.fromRGBO(255, 255, 248, 1)),
                       ),
                       const Text(
                         'Alumni Tracking System',
                         style: TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
-                            color: Color.fromRGBO(60, 60, 60, 1)),
+                            color: Color.fromRGBO(240, 240, 240, 1)),
                       ),
                     ],
                   ),
@@ -133,7 +133,7 @@ class _NavigationPageState extends State<NavigationPage> {
                         item.label!,
                         // TEXT ITO
                         style: TextStyle(
-                            color: Color.fromARGB(255, 60, 60, 60),
+                            color: Color.fromARGB(255, 238, 231, 231),
                             fontSize: 15),
                       )))
                   .toList(),
