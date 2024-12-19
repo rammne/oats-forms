@@ -341,8 +341,10 @@ class _HomePageState extends State<HomePage> {
           color: Color.fromARGB(255, 253, 216, 83),
         ),
         backgroundColor: const Color.fromRGBO(11, 10, 95, 1),
-        title: const Text('OLOPSC Alumni Tracking System (OATS)',
-        style: TextStyle(color: Color.fromARGB(255, 253, 216, 83)),) ,
+        title: const Text(
+          'OLOPSC Alumni Tracking System (OATS)',
+          style: TextStyle(color: Color.fromARGB(255, 253, 216, 83)),
+        ),
       ),
       body: ResponsiveLayout(
         desktopBody: SingleChildScrollView(
@@ -353,7 +355,23 @@ class _HomePageState extends State<HomePage> {
               child: Column(
                 children: [
                   _buildHeader(),
-                  _buildFormFields(false),
+                  Container(
+                    margin: const EdgeInsets.symmetric(vertical: 20),
+                    padding: const EdgeInsets.all(30),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(20),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.1),
+                          spreadRadius: 2,
+                          blurRadius: 10,
+                          offset: const Offset(0, 3),
+                        ),
+                      ],
+                    ),
+                    child: _buildFormFields(false),
+                  ),
                 ],
               ),
             ),
@@ -367,7 +385,23 @@ class _HomePageState extends State<HomePage> {
               child: Column(
                 children: [
                   _buildHeader(),
-                  _buildFormFields(true),
+                  Container(
+                    margin: const EdgeInsets.symmetric(vertical: 20),
+                    padding: const EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(20),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.1),
+                          spreadRadius: 2,
+                          blurRadius: 10,
+                          offset: const Offset(0, 3),
+                        ),
+                      ],
+                    ),
+                    child: _buildFormFields(true),
+                  ),
                 ],
               ),
             ),

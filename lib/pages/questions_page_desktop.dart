@@ -80,6 +80,16 @@ class _AlumniTrackingFormState extends State<AlumniTrackingForm> {
     _initializeControllers();
   }
 
+  double _getFormWidth(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    if (screenWidth > 1200) {
+      return screenWidth * 0.4; // 40% of screen width for large screens
+    } else if (screenWidth > 600) {
+      return screenWidth * 0.6; // 60% of screen width for medium screens
+    }
+    return screenWidth * 0.9; // 90% of screen width for small screens
+  }
+
   void _initializeControllers() {
     _questionControllers = {
       'skill_impact': TextEditingController(),
@@ -139,36 +149,49 @@ class _AlumniTrackingFormState extends State<AlumniTrackingForm> {
   }
 
   Widget _buildSkillsSelection() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Select Your Life Skills ($_selectedSkillsCount/$_kMaxSkillSelections)',
-          style: const TextStyle(fontWeight: FontWeight.bold),
-        ),
-        const SizedBox(height: 12),
-        Wrap(
-          spacing: 10,
-          runSpacing: 10,
-          children: _skillsMap.keys.map((skill) {
-            return FilterChip(
-              label: Text(skill),
-              selected: _skillsMap[skill]!,
-              onSelected: (selected) => _toggleSkillSelection(skill, selected),
-              selectedColor: _kPrimaryColor.withOpacity(0.3),
-              checkmarkColor: const Color.fromRGBO(11, 10, 95, 1),
-            );
-          }).toList(),
-        ),
-        if (_selectedSkillsCount < _kMinSkillSelections)
-          Padding(
-            padding: const EdgeInsets.only(top: 8.0),
-            child: Text(
-              'Please select at least $_kMinSkillSelections skills',
-              style: TextStyle(color: Colors.red.shade700, fontSize: 12),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        double chipSpacing = constraints.maxWidth > 600 ? 10 : 8;
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Select Your Life Skills ($_selectedSkillsCount/$_kMaxSkillSelections)',
+              style: const TextStyle(fontWeight: FontWeight.bold),
             ),
-          ),
-      ],
+            const SizedBox(height: 12),
+            Wrap(
+              spacing: chipSpacing,
+              runSpacing: chipSpacing,
+              children: _skillsMap.keys.map((skill) {
+                return FilterChip(
+                  label: Text(
+                    skill,
+                    style: TextStyle(
+                      fontSize: constraints.maxWidth > 600 ? 14 : 12,
+                    ),
+                  ),
+                  selected: _skillsMap[skill]!,
+                  onSelected: (selected) => _toggleSkillSelection(skill, selected),
+                  selectedColor: _kPrimaryColor.withOpacity(0.3),
+                  checkmarkColor: const Color.fromRGBO(11, 10, 95, 1),
+                );
+              }).toList(),
+            ),
+            if (_selectedSkillsCount < _kMinSkillSelections)
+              Padding(
+                padding: const EdgeInsets.only(top: 8.0),
+                child: Text(
+                  'Please select at least $_kMinSkillSelections skills',
+                  style: TextStyle(
+                    color: Colors.red.shade700,
+                    fontSize: constraints.maxWidth > 600 ? 12 : 10,
+                  ),
+                ),
+              ),
+          ],
+        );
+      },
     );
   }
 
@@ -178,55 +201,70 @@ class _AlumniTrackingFormState extends State<AlumniTrackingForm> {
     required List<String> options,
     bool Function(String?)? onChanged,
   }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          title,
-          style: const TextStyle(
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        const SizedBox(height: 12),
-        SizedBox(
-          width: 450,
-          child: DropdownButtonFormField2<String>(
-            decoration: InputDecoration(
-              contentPadding: EdgeInsets.zero,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(15),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        double dropdownWidth = constraints.maxWidth > 600 ? 450 : constraints.maxWidth;
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              title,
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: constraints.maxWidth > 600 ? 14 : 12,
               ),
             ),
-            hint: const Text('Select an option'),
-            items: options
-                .map((option) =>
-                    DropdownMenuItem(value: option, child: Text(option)))
-                .toList(),
-            validator: (value) =>
-                value == null ? 'Please select an option' : null,
-            onChanged: (value) {
-              if (onChanged != null) {
-                onChanged(value);
-              }
-              _questionControllers[controllerKey]?.text = value ?? '';
-            },
-            buttonStyleData: ButtonStyleData(
-              height: 50,
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(15),
-                border: Border.all(color: Colors.grey.shade300),
+            const SizedBox(height: 12),
+            SizedBox(
+              width: dropdownWidth,
+              child: DropdownButtonFormField2<String>(
+                decoration: InputDecoration(
+                  contentPadding: EdgeInsets.zero,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                ),
+                hint: Text(
+                  'Select an option',
+                  style: TextStyle(
+                    fontSize: constraints.maxWidth > 600 ? 14 : 12,
+                  ),
+                ),
+                items: options.map((option) => DropdownMenuItem(
+                  value: option,
+                  child: Text(
+                    option,
+                    style: TextStyle(
+                      fontSize: constraints.maxWidth > 600 ? 14 : 12,
+                    ),
+                  ),
+                )).toList(),
+                validator: (value) => value == null ? 'Please select an option' : null,
+                onChanged: (value) {
+                  if (onChanged != null) {
+                    onChanged(value);
+                  }
+                  _questionControllers[controllerKey]?.text = value ?? '';
+                },
+                buttonStyleData: ButtonStyleData(
+                  height: constraints.maxWidth > 600 ? 50 : 40,
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(15),
+                    border: Border.all(color: Colors.grey.shade300),
+                  ),
+                ),
+                dropdownStyleData: DropdownStyleData(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                ),
               ),
             ),
-            dropdownStyleData: DropdownStyleData(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(15),
-              ),
-            ),
-          ),
-        ),
-      ],
+          ],
+        );
+      },
     );
   }
 
@@ -393,7 +431,7 @@ class _AlumniTrackingFormState extends State<AlumniTrackingForm> {
     }
   }
 
-  @override
+   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: _kPrimaryColor,
@@ -401,80 +439,90 @@ class _AlumniTrackingFormState extends State<AlumniTrackingForm> {
         iconTheme: IconThemeData(
           color: Color.fromARGB(255, 253, 216, 83),
         ),
-        title: const Text('Alumni Tracking System', style: TextStyle(color: const Color.fromARGB(255, 253, 216, 83))),
+        title: const Text(
+          'Alumni Tracking System',
+          style: TextStyle(color: Color.fromARGB(255, 253, 216, 83)),
+        ),
         backgroundColor: Color.fromRGBO(11, 10, 95, 1),
       ),
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.all(16.0),
-            child: Card(
-              elevation: 8,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(15),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Form(
-                  key: _formKey,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      _buildSkillsSelection(),
-                      const SizedBox(height: 20),
-                      _buildDropdownQuestion(
-                        title:
-                            'The skills you\'ve highlighted helped you in pursuing your career path.',
-                        controllerKey: 'skill_impact',
-                        options: _likertScaleOptions,
-                      ),
-                      const SizedBox(height: 20),
-                      _buildDropdownQuestion(
-                        title: 'Time taken to land first job after graduation',
-                        controllerKey: 'employment_duration',
-                        options: _employmentDurationOptions,
-                      ),
-                      const SizedBox(height: 20),
-                      if (widget.userInformation['employment_status'] !=
-                          'Others') ...[
+            padding: EdgeInsets.all(MediaQuery.of(context).size.width > 600 ? 16.0 : 8.0),
+            child: SizedBox(
+              width: _getFormWidth(context),
+              child: Card(
+                elevation: 8,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15),
+                ),
+                child: Padding(
+                  padding: EdgeInsets.all(
+                    MediaQuery.of(context).size.width > 600 ? 16.0 : 12.0,
+                  ),
+                  child: Form(
+                    key: _formKey,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        _buildSkillsSelection(),
+                        SizedBox(height: MediaQuery.of(context).size.width > 600 ? 20 : 16),
                         _buildDropdownQuestion(
-                          title: 'Your first job aligns with your current job',
-                          controllerKey: 'job_alignment',
+                          title: 'The skills you\'ve highlighted helped you in pursuing your career path.',
+                          controllerKey: 'skill_impact',
                           options: _likertScaleOptions,
                         ),
-                        const SizedBox(height: 20),
+                        SizedBox(height: MediaQuery.of(context).size.width > 600 ? 20 : 16),
                         _buildDropdownQuestion(
-                            title:
-                                'The program you took in OLOPSC matches your current job.',
+                          title: 'Time taken to land first job after graduation',
+                          controllerKey: 'employment_duration',
+                          options: _employmentDurationOptions,
+                        ),
+                        SizedBox(height: MediaQuery.of(context).size.width > 600 ? 20 : 16),
+                        if (widget.userInformation['employment_status'] != 'Others') ...[
+                          _buildDropdownQuestion(
+                            title: 'Your first job aligns with your current job',
+                            controllerKey: 'job_alignment',
+                            options: _likertScaleOptions,
+                          ),
+                          SizedBox(height: MediaQuery.of(context).size.width > 600 ? 20 : 16),
+                          _buildDropdownQuestion(
+                            title: 'The program you took in OLOPSC matches your current job.',
                             controllerKey: 'program_match',
-                            options: _likertScaleOptions),
-                        const SizedBox(height: 20),
-                        _buildDropdownQuestion(
+                            options: _likertScaleOptions,
+                          ),
+                          SizedBox(height: MediaQuery.of(context).size.width > 600 ? 20 : 16),
+                          _buildDropdownQuestion(
                             title: 'You are satisfied with your current job.',
                             controllerKey: 'job_satisfaction',
-                            options: _likertScaleOptions),
-                        const SizedBox(height: 20),
-                      ],
-                      const SizedBox(height: 30),
-                      ElevatedButton(
-                    onPressed: _selectedSkillsCount >= _kMinSkillSelections &&
-                            !_isSubmitting
-                        ? _submitForm
-                        : null,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color.fromRGBO(11, 10, 95, 1),
-                      minimumSize: const Size(double.infinity, 50),
-                    ),
-                    child: _isSubmitting
-                        ? const CircularProgressIndicator(color: Colors.white)
-                        : const Text(
-                            'SUBMIT',
-                            style: TextStyle(
-                              color: Color.fromARGB(255, 253, 216, 83),
+                            options: _likertScaleOptions,
+                          ),
+                          SizedBox(height: MediaQuery.of(context).size.width > 600 ? 20 : 16),
+                        ],
+                        SizedBox(height: MediaQuery.of(context).size.width > 600 ? 30 : 20),
+                        ElevatedButton(
+                          onPressed: _selectedSkillsCount >= _kMinSkillSelections && !_isSubmitting
+                              ? _submitForm
+                              : null,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color.fromRGBO(11, 10, 95, 1),
+                            minimumSize: Size(
+                              double.infinity,
+                              MediaQuery.of(context).size.width > 600 ? 50 : 40,
                             ),
                           ),
-                  ),
-                    ],
+                          child: _isSubmitting
+                              ? const CircularProgressIndicator(color: Colors.white)
+                              : Text(
+                                  'SUBMIT',
+                                  style: TextStyle(
+                                    color: Color.fromARGB(255, 253, 216, 83),
+                                    fontSize: MediaQuery.of(context).size.width > 600 ? 16 : 14,
+                                  ),
+                                ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
