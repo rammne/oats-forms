@@ -102,7 +102,8 @@ class _WelcomePageState extends State<WelcomePage> {
           const SizedBox(height: 16),
           Image.network(
             'https://lh3.googleusercontent.com/d/1tEYHz19SLQ5SzTyX_nd6oGZHikQqRpcX',
-            scale: 1.5,
+            cacheWidth: 740,
+            cacheHeight: 263,
           ),
           const SizedBox(height: 16),
           Row(
