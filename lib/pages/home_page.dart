@@ -340,7 +340,7 @@ class _HomePageState extends State<HomePage> {
         iconTheme: IconThemeData(
           color: Color.fromARGB(255, 253, 216, 83),
         ),
-        backgroundColor: const Color.fromRGBO(11, 10, 95, 1),
+        backgroundColor: const Color(0xFF0b0a5f),
         title: const Text(
           'OLOPSC Alumni Tracking System (OATS)',
           style: TextStyle(color: Color.fromARGB(255, 253, 216, 83)),
