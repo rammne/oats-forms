@@ -26,18 +26,18 @@ class ProfileScreen extends StatelessWidget {
             final alumniData = snapshot.data!;
             return Container(
               decoration: BoxDecoration(
-                image: DecorationImage(
-                  colorFilter: ColorFilter.mode(Colors.white, BlendMode.srcATop),
-                  image: NetworkImage(
-                    'https://lh3.googleusercontent.com/d/1A9nZdV4Y4kXErJlBOkahkpODE7EVhp1x'
-                  ),
-                  alignment: Alignment.bottomRight,
-                  scale: 2.5,
-                )
+                  image: DecorationImage(
+                colorFilter: ColorFilter.mode(const Color.fromARGB(100, 0, 0, 0), BlendMode.srcATop),
+                image: NetworkImage(
+                    'https://lh3.googleusercontent.com/d/1ZFqS4S9ZdUdUAL1Vl2yLKeNkBMcpsLDU'
+                    ),
+                    opacity: 0.25,
+              )
               ),
               child: CustomScrollView(
                 slivers: [
                   _buildAppBar(context, alumniData),
+                  
                   _buildProfileContent(alumniData),
                 ],
               ),
@@ -54,7 +54,7 @@ class ProfileScreen extends StatelessWidget {
       floating: false,
       pinned: true,
       automaticallyImplyLeading: false,
-      backgroundColor:  const Color.fromRGBO(11, 10, 95, 1),
+      backgroundColor: const Color.fromRGBO(11, 10, 95, 1),
       flexibleSpace: FlexibleSpaceBar(
         title: Text(
           'Welcome ${alumniData['last_name']}, ${alumniData['first_name']}!',
@@ -86,54 +86,54 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
-  
   Widget _buildHorizontalLayout(dynamic alumniData) {
-  return Row(
-    crossAxisAlignment: CrossAxisAlignment.start, // Aligns children at the top
-    children: [
-      Expanded(
-        child: Container(
-          margin: const EdgeInsets.all(16), // Consistent margin
-          decoration: BoxDecoration(
-            color: const Color.fromARGB(121, 249, 249, 249),
-            borderRadius: BorderRadius.circular(20),
-            boxShadow: const [
-              BoxShadow(
-                color: Colors.black12,
-                blurRadius: 10,
-                offset: Offset(0, 4),
-              ),
-            ],
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(20),
-            child: ProfileSection(alumniData),
-          ),
-        ),
-      ),
-      Expanded(
-        child: Container(
-          margin: const EdgeInsets.all(16), // Consistent margin
-          decoration: BoxDecoration(
-            color: const Color.fromARGB(121, 249, 249, 249),
-            borderRadius: BorderRadius.circular(20),
-            boxShadow: const [
-              BoxShadow(
-                color: Colors.black12,
-                blurRadius: 10,
-                offset: Offset(0, 4),
-              ),
-            ],
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(20),
-            child: AlumniFeedbackSection(alumniData),
+    return Row(
+      crossAxisAlignment:
+          CrossAxisAlignment.start, // Aligns children at the top
+      children: [
+        Expanded(
+          child: Container(
+            margin: const EdgeInsets.all(16), // Consistent margin
+            decoration: BoxDecoration(
+              color: const Color.fromARGB(121, 249, 249, 249),
+              borderRadius: BorderRadius.circular(20),
+              boxShadow: const [
+                BoxShadow(
+                  color: Colors.black12,
+                  blurRadius: 10,
+                  offset: Offset(0, 4),
+                ),
+              ],
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(20),
+              child: ProfileSection(alumniData),
+            ),
           ),
         ),
-      ),
-    ],
-  );
-}
+        Expanded(
+          child: Container(
+            margin: const EdgeInsets.all(16), // Consistent margin
+            decoration: BoxDecoration(
+              color: const Color.fromARGB(121, 249, 249, 249),
+              borderRadius: BorderRadius.circular(20),
+              boxShadow: const [
+                BoxShadow(
+                  color: Colors.black12,
+                  blurRadius: 10,
+                  offset: Offset(0, 4),
+                ),
+              ],
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(20),
+              child: AlumniFeedbackSection(alumniData),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
 
   Widget _buildVerticalLayout(dynamic alumniData) {
     return Column(
@@ -167,19 +167,19 @@ class ProfileScreen extends StatelessWidget {
               BoxShadow(
                 color: Colors.black12,
                 blurRadius: 10,
-                offset: Offset(0,4),
+                offset: Offset(0, 4),
               ),
             ],
           ),
           child: Padding(
             padding: const EdgeInsets.all(20),
             child: AlumniFeedbackSection(alumniData),
-            ),
-              ),
-            ],
-          );
+          ),
+        ),
+      ],
+    );
   }
-  }
+}
 
 class ProfileSection extends StatelessWidget {
   final dynamic alumniData;
@@ -202,7 +202,8 @@ class ProfileSection extends StatelessWidget {
         const SizedBox(height: 16),
         ProfileInfoTile(
           label: 'Full Name',
-          value: '${alumniData['first_name']} ${alumniData['middle_name']} ${alumniData['last_name']}',
+          value:
+              '${alumniData['first_name']} ${alumniData['middle_name']} ${alumniData['last_name']}',
         ),
         ProfileInfoTile(
           label: 'Degree',
@@ -252,56 +253,161 @@ class AlumniFeedbackSection extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 16),
+        Text(
+          "Question 1",
+          style: TextStyle(
+            fontSize: 14,
+            color: Colors.black,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
         QuestionCard(
           question: 'What are the life skills OLOPSC has taught you?',
         ),
         Align(
-          alignment: Alignment.centerRight,
-          child: Container(
-            margin: EdgeInsets.symmetric(vertical: 8),
-            padding: EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              border: Border.all(
-                width: 0.5
-              ),
-              color: Colors.grey[100],
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            alignment: Alignment.centerRight,
+            child:   
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-
-                SizedBox(height: 8),
-                Text("${alumniData['question_1'].join(', ')}", textAlign: TextAlign.right,),
+                Text(
+                      "${alumniData['first_name']} ${alumniData['last_name']}",
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.black,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                Container(
+                    margin: EdgeInsets.symmetric(vertical: 8),
+                    padding: EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      border: Border.all(width: 0.5),
+                      color: Colors.grey[100],
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(height: 8),
+                        Text(
+                          "${alumniData['question_1'].join(', ')}",
+                          textAlign: TextAlign.right,
+                        ),
+                      ],
+                    )),
               ],
-            )
-          )
+            )),
+        Text(
+          "Question 2",
+          style: TextStyle(
+            fontSize: 14,
+            color: Colors.black,
+            fontWeight: FontWeight.w500,
+          ),
         ),
         QuestionCard(
-          question: 'How did these skills help you in pursuing your career path?',
+          question:
+              'How did these skills help you in pursuing your career path?',
         ),
+        // Align(
+        //   alignment: Alignment.centerRight,
+        //   child: Text(
+        //      "${alumniData['first_name']} ${alumniData['last_name']}",
+        //       style: TextStyle(
+        //         fontSize: 14,
+        //         color: Colors.black,
+        //         fontWeight: FontWeight.bold,
+        //       ),
+        //   ),
+        // ),
         Align(
           alignment: Alignment.centerRight,
-          child: AnswerCard(
-            answer: alumniData['question_2'],
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Text(
+                "${alumniData['first_name']} ${alumniData['last_name']}",
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Colors.black,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              AnswerCard(
+                answer: alumniData['question_2'],
+              ),
+            ],
+          ),
+        ),
+        Text(
+          "Question 3",
+          style: TextStyle(
+            fontSize: 14,
+            color: Colors.black,
+            fontWeight: FontWeight.w500,
           ),
         ),
         QuestionCard(
           question: 'Does your first job align with your current job?',
         ),
+
         Align(
           alignment: Alignment.centerRight,
-          child: AnswerCard(
-            answer: alumniData['question_3'],
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Text(
+                      "${alumniData['first_name']} ${alumniData['last_name']}",
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.black,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+              AnswerCard(
+                answer: alumniData['question_3'],
+              ),
+            ],
+          ),
+        ),
+        Text(
+          "Question 4",
+          style: TextStyle(
+            fontSize: 14,
+            color: Colors.black,
+            fontWeight: FontWeight.w500,
           ),
         ),
         QuestionCard(
-          question: 'How long did it take to land your first job after graduation?',
+          question:
+              'How long did it take to land your first job after graduation?',
         ),
         Align(
           alignment: Alignment.centerRight,
-          child: AnswerCard(
-            answer: alumniData['question_4'],
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Text(
+                      "${alumniData['first_name']} ${alumniData['last_name']}",
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.black,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+              AnswerCard(
+                answer: alumniData['question_4'],
+              ),
+            ],
+          ),
+        ),
+        Text(
+          "Question 5",
+          style: TextStyle(
+            fontSize: 14,
+            color: Colors.black,
+            fontWeight: FontWeight.w500,
           ),
         ),
         QuestionCard(
@@ -309,8 +415,29 @@ class AlumniFeedbackSection extends StatelessWidget {
         ),
         Align(
           alignment: Alignment.centerRight,
-          child: AnswerCard(
-            answer: alumniData['question_5'],
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Text(
+                      "${alumniData['first_name']} ${alumniData['last_name']}",
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.black,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+              AnswerCard(
+                answer: alumniData['question_5'],
+              ),
+            ],
+          ),
+        ),
+        Text(
+          "Question 6",
+          style: TextStyle(
+            fontSize: 14,
+            color: Colors.black,
+            fontWeight: FontWeight.w500,
           ),
         ),
         QuestionCard(
@@ -318,8 +445,21 @@ class AlumniFeedbackSection extends StatelessWidget {
         ),
         Align(
           alignment: Alignment.centerRight,
-          child: AnswerCard(
-            answer: alumniData['question_6'],
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Text(
+                      "${alumniData['first_name']} ${alumniData['last_name']}",
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.black,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+              AnswerCard(
+                answer: alumniData['question_6'],
+              ),
+            ],
           ),
         ),
       ],
