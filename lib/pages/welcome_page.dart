@@ -22,9 +22,21 @@ class _WelcomePageState extends State<WelcomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 253, 216, 83),
+      backgroundColor: const Color(0xFFffea56),
       appBar: _buildAppBar(),
-      body: SingleChildScrollView(
+      body: Container(
+        constraints: const BoxConstraints.expand(),
+        decoration: const BoxDecoration(
+          image: DecorationImage(
+            colorFilter: ColorFilter.mode(
+                Color.fromARGB(100, 0, 0, 0), BlendMode.srcATop),
+            image: NetworkImage(
+              'https://lh3.googleusercontent.com/d/1ZFqS4S9ZdUdUAL1Vl2yLKeNkBMcpsLDU',
+            ),
+            fit: BoxFit.cover,
+            opacity: 0.15,
+          ),
+        ),
         child: Column(
           children: [
             _buildHeaderSection(),
@@ -56,17 +68,26 @@ class _WelcomePageState extends State<WelcomePage> {
   AppBar _buildAppBar() {
     return AppBar(
       backgroundColor: const Color.fromRGBO(11, 10, 95, 1),
-      title: const Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      title: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(
-            'OLOPSC Alumni Form',
-            style: TextStyle(fontSize: 18, color: const Color.fromARGB(255, 253, 216, 83)),
+          const Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'OLOPSC Alumni Form',
+                style: TextStyle(fontSize: 18, color: Color(0xFFffea56)),
+              ),
+              SizedBox(height: 4),
+              Text(
+                'OLOPSC Alumni Tracking System (OATS)',
+                style: TextStyle(fontSize: 14, color: Color(0xFFffea56)),
+              ),
+            ],
           ),
-          SizedBox(height: 4),
-          Text(
-            'OLOPSC Alumni Tracking System (OATS)',
-            style: TextStyle(fontSize: 14, color: const Color.fromARGB(255, 253, 216, 83)),
+          Image.network(
+            'https://lh3.googleusercontent.com/d/1CcRXI71dz-jmNoZF_JZ2T0cq9NuyNq6t',
+            scale: 28,
           ),
         ],
       ),
@@ -78,18 +99,10 @@ class _WelcomePageState extends State<WelcomePage> {
       padding: const EdgeInsets.symmetric(vertical: 20),
       child: Column(
         children: [
+          const SizedBox(height: 16),
           Image.network(
-            'https://lh3.googleusercontent.com/d/1DlDDvI0eIDivjwvCrngmyKp_Yr6d8oqH',
+            'https://lh3.googleusercontent.com/d/1tEYHz19SLQ5SzTyX_nd6oGZHikQqRpcX',
             scale: 1.5,
-          ),
-          const SizedBox(height: 12),
-          const Text(
-            'Our Lady of Perpetual Succor College',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-          const Text(
-            'Alumni Tracking System',
-            style: TextStyle(fontSize: 16),
           ),
           const SizedBox(height: 16),
           Row(
