@@ -443,7 +443,7 @@ class _AlumniTrackingFormState extends State<AlumniTrackingForm> {
           'Alumni Tracking System',
           style: TextStyle(color: Color.fromARGB(255, 253, 216, 83)),
         ),
-        backgroundColor: Color.fromRGBO(11, 10, 95, 1),
+        backgroundColor: const Color(0xFF0b0a5f),
       ),
       body: SafeArea(
         child: Center(
