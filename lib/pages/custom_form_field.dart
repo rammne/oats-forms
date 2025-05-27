@@ -5,6 +5,7 @@ class CustomFormField extends StatelessWidget {
   final String label;
   final String? Function(String?)? validator;
   final TextInputType? keyboardType;
+  final bool readOnly;
 
   const CustomFormField({
     Key? key,
@@ -12,6 +13,7 @@ class CustomFormField extends StatelessWidget {
     required this.label,
     this.validator,
     this.keyboardType,
+    this.readOnly = false,
   }) : super(key: key);
 
   @override
@@ -28,6 +30,7 @@ class CustomFormField extends StatelessWidget {
       ),
       validator: validator,
       keyboardType: keyboardType,
+      readOnly: readOnly,
     );
   }
 }

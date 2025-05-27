@@ -1,6 +1,7 @@
 import 'package:alumni/pages/home_page.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class WelcomePage extends StatefulWidget {
   const WelcomePage({super.key});
@@ -12,11 +13,26 @@ class WelcomePage extends StatefulWidget {
 class _WelcomePageState extends State<WelcomePage> {
   late final GlobalKey<FormState> formKey;
   bool isChecked = false;
+  final TextEditingController idController = TextEditingController();
+  final TextEditingController firstNameController = TextEditingController();
+  final TextEditingController middleNameController = TextEditingController();
+  final TextEditingController lastNameController = TextEditingController();
+  bool isLoading = false;
+  String? errorMessage;
 
   @override
   void initState() {
     super.initState();
     formKey = GlobalKey<FormState>();
+  }
+
+  @override
+  void dispose() {
+    idController.dispose();
+    firstNameController.dispose();
+    middleNameController.dispose();
+    lastNameController.dispose();
+    super.dispose();
   }
 
   @override
@@ -37,29 +53,162 @@ class _WelcomePageState extends State<WelcomePage> {
             opacity: 0.15,
           ),
         ),
-        child: Column(
-          children: [
-            _buildHeaderSection(),
-            _buildAnimatedMessage(),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Checkbox(
-                  value: isChecked,
-                  onChanged: (bool? value) {
-                    setState(() {
-                      isChecked = value!;
-                    });
-                  },
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              _buildHeaderSection(),
+              _buildAnimatedMessage(),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Checkbox(
+                    value: isChecked,
+                    onChanged: (bool? value) {
+                      setState(() {
+                        isChecked = value!;
+                        errorMessage = null;
+                      });
+                    },
+                  ),
+                  const Text(
+                    'I am an OLOPSC Alumni',
+                    style: TextStyle(fontSize: 18),
+                  )
+                ],
+              ),
+              if (isChecked) ...[
+                Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 32, vertical: 8),
+                  child: Column(
+                    children: [
+                      TextField(
+                        controller: idController,
+                        decoration: const InputDecoration(
+                          labelText: 'StudentID/AlumniID',
+                          border: OutlineInputBorder(),
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      TextField(
+                        controller: firstNameController,
+                        decoration: const InputDecoration(
+                          labelText: 'First Name',
+                          border: OutlineInputBorder(),
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      TextField(
+                        controller: middleNameController,
+                        decoration: const InputDecoration(
+                          labelText: 'Middle Name',
+                          border: OutlineInputBorder(),
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      TextField(
+                        controller: lastNameController,
+                        decoration: const InputDecoration(
+                          labelText: 'Last Name',
+                          border: OutlineInputBorder(),
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      if (errorMessage != null)
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 8),
+                          child: Text(
+                            errorMessage!,
+                            style: const TextStyle(color: Colors.red),
+                          ),
+                        ),
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFF0B0A5F),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 32, vertical: 12),
+                          ),
+                          onPressed: isLoading
+                              ? null
+                              : () async {
+                                  setState(() {
+                                    isLoading = true;
+                                    errorMessage = null;
+                                  });
+                                  final id = idController.text.trim();
+                                  final first = firstNameController.text.trim();
+                                  final middle =
+                                      middleNameController.text.trim();
+                                  final last = lastNameController.text.trim();
+                                  if (id.isEmpty ||
+                                      first.isEmpty ||
+                                      middle.isEmpty ||
+                                      last.isEmpty) {
+                                    setState(() {
+                                      errorMessage =
+                                          'Please fill in all fields.';
+                                      isLoading = false;
+                                    });
+                                    return;
+                                  }
+                                  try {
+                                    // Check if alumni already exists in 'alumni' collection by alumni_id only
+                                    final alumniQuery = await FirebaseFirestore
+                                        .instance
+                                        .collection('alumni')
+                                        .where('alumni_id', isEqualTo: id)
+                                        .limit(1)
+                                        .get();
+                                    if (alumniQuery.docs.isNotEmpty) {
+                                      // Alumni exists, go to profile page
+                                      Navigator.pushReplacementNamed(
+                                        context,
+                                        'profile',
+                                        arguments: alumniQuery.docs.first.id,
+                                      );
+                                    } else {
+                                      // Not found, go to basic-info-form
+                                      Navigator.pushNamed(
+                                        context,
+                                        'basic-info-form',
+                                        arguments: {
+                                          'alumni_id': id,
+                                          'first_name': first,
+                                          'middle_name': middle,
+                                          'last_name': last,
+                                        },
+                                      );
+                                    }
+                                  } catch (e) {
+                                    setState(() {
+                                      errorMessage =
+                                          'Error connecting to server.';
+                                    });
+                                  } finally {
+                                    setState(() {
+                                      isLoading = false;
+                                    });
+                                  }
+                                },
+                          child: isLoading
+                              ? const SizedBox(
+                                  width: 20,
+                                  height: 20,
+                                  child: CircularProgressIndicator(
+                                      strokeWidth: 2, color: Colors.white))
+                              : const Text('Proceed',
+                                  style: TextStyle(
+                                      color: Colors.white, fontSize: 18)),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-                const Text(
-                  'I am an OLOPSC Alumni',
-                  style: TextStyle(fontSize: 18),
-                )
               ],
-            ),
-            if (isChecked == true) _buildGetStartedButton(context),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -161,10 +310,7 @@ class _WelcomePageState extends State<WelcomePage> {
           padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
         ),
         onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const HomePage()),
-          );
+          Navigator.pushNamed(context, 'basic-info-form');
         },
         child: const Text(
           'Get Started',

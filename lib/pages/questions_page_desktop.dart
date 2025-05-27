@@ -36,7 +36,7 @@ class _AlumniTrackingFormState extends State<AlumniTrackingForm> {
   final FirestoreService alumni = FirestoreService();
 
   // Alumni Inputs
-  late final Map information = widget.userInformation;
+  late final Map information;
 
   // Alumni Skills
   final List<String> _alumniSkills = [];
@@ -78,6 +78,32 @@ class _AlumniTrackingFormState extends State<AlumniTrackingForm> {
   void initState() {
     super.initState();
     _initializeControllers();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // If userInformation is empty, try to get from ModalRoute
+    if (widget.userInformation.isEmpty &&
+        ModalRoute.of(context)?.settings.arguments != null) {
+      information =
+          ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+    } else {
+      information = widget.userInformation;
+    }
+    // Ensure name fields are present in information
+    if (!information.containsKey('first_name') &&
+        information.containsKey('firstName')) {
+      information['first_name'] = information['firstName'];
+    }
+    if (!information.containsKey('middle_name') &&
+        information.containsKey('middleName')) {
+      information['middle_name'] = information['middleName'];
+    }
+    if (!information.containsKey('last_name') &&
+        information.containsKey('lastName')) {
+      information['last_name'] = information['lastName'];
+    }
   }
 
   double _getFormWidth(BuildContext context) {
@@ -172,7 +198,8 @@ class _AlumniTrackingFormState extends State<AlumniTrackingForm> {
                     ),
                   ),
                   selected: _skillsMap[skill]!,
-                  onSelected: (selected) => _toggleSkillSelection(skill, selected),
+                  onSelected: (selected) =>
+                      _toggleSkillSelection(skill, selected),
                   selectedColor: _kPrimaryColor.withOpacity(0.3),
                   checkmarkColor: const Color.fromRGBO(11, 10, 95, 1),
                 );
@@ -203,7 +230,8 @@ class _AlumniTrackingFormState extends State<AlumniTrackingForm> {
   }) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        double dropdownWidth = constraints.maxWidth > 600 ? 450 : constraints.maxWidth;
+        double dropdownWidth =
+            constraints.maxWidth > 600 ? 450 : constraints.maxWidth;
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -230,16 +258,19 @@ class _AlumniTrackingFormState extends State<AlumniTrackingForm> {
                     fontSize: constraints.maxWidth > 600 ? 14 : 12,
                   ),
                 ),
-                items: options.map((option) => DropdownMenuItem(
-                  value: option,
-                  child: Text(
-                    option,
-                    style: TextStyle(
-                      fontSize: constraints.maxWidth > 600 ? 14 : 12,
-                    ),
-                  ),
-                )).toList(),
-                validator: (value) => value == null ? 'Please select an option' : null,
+                items: options
+                    .map((option) => DropdownMenuItem(
+                          value: option,
+                          child: Text(
+                            option,
+                            style: TextStyle(
+                              fontSize: constraints.maxWidth > 600 ? 14 : 12,
+                            ),
+                          ),
+                        ))
+                    .toList(),
+                validator: (value) =>
+                    value == null ? 'Please select an option' : null,
                 onChanged: (value) {
                   if (onChanged != null) {
                     onChanged(value);
@@ -286,29 +317,17 @@ class _AlumniTrackingFormState extends State<AlumniTrackingForm> {
       );
 
       await _updateQuestion1Stats();
-
-      // Set the new alumni document
       await _setAlumniDocument(document);
-
-      // Update graduation year statistics
       await _updateYearStats();
-
-      // Update question statistics
       await _updateQuestionStats('question_2', _question2Stats);
-
       await _updateQuestionStats('question_3', _question3Stats);
-
       await _updateQuestionStats('question_5', _question5Stats);
-
       await _updateQuestionStats('question_6', _question6Stats);
 
-      Navigator.pushReplacement(
+      Navigator.pushReplacementNamed(
         context,
-        MaterialPageRoute(
-          builder: (context) => NavigationPage(
-            docID: documentID,
-          ),
-        ),
+        'profile',
+        arguments: documentID,
       );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -342,6 +361,7 @@ class _AlumniTrackingFormState extends State<AlumniTrackingForm> {
   // Function to set the alumni document
   Future<void> _setAlumniDocument(DocumentReference document) async {
     await document.set({
+      'alumni_id': information['alumni_id'], // <-- Ensure alumni_id is saved
       'email': information['email'],
       'first_name': information['first_name'],
       'last_name': information['last_name'],
@@ -431,7 +451,7 @@ class _AlumniTrackingFormState extends State<AlumniTrackingForm> {
     }
   }
 
-   @override
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: _kPrimaryColor,
@@ -448,7 +468,8 @@ class _AlumniTrackingFormState extends State<AlumniTrackingForm> {
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
-            padding: EdgeInsets.all(MediaQuery.of(context).size.width > 600 ? 16.0 : 8.0),
+            padding: EdgeInsets.all(
+                MediaQuery.of(context).size.width > 600 ? 16.0 : 8.0),
             child: SizedBox(
               width: _getFormWidth(context),
               child: Card(
@@ -466,58 +487,90 @@ class _AlumniTrackingFormState extends State<AlumniTrackingForm> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         _buildSkillsSelection(),
-                        SizedBox(height: MediaQuery.of(context).size.width > 600 ? 20 : 16),
+                        SizedBox(
+                            height: MediaQuery.of(context).size.width > 600
+                                ? 20
+                                : 16),
                         _buildDropdownQuestion(
-                          title: 'The skills you\'ve highlighted helped you in pursuing your career path.',
+                          title:
+                              'The skills you\'ve highlighted helped you in pursuing your career path.',
                           controllerKey: 'skill_impact',
                           options: _likertScaleOptions,
                         ),
-                        SizedBox(height: MediaQuery.of(context).size.width > 600 ? 20 : 16),
+                        SizedBox(
+                            height: MediaQuery.of(context).size.width > 600
+                                ? 20
+                                : 16),
                         _buildDropdownQuestion(
-                          title: 'Time taken to land first job after graduation',
+                          title:
+                              'Time taken to land first job after graduation',
                           controllerKey: 'employment_duration',
                           options: _employmentDurationOptions,
                         ),
-                        SizedBox(height: MediaQuery.of(context).size.width > 600 ? 20 : 16),
-                        if (widget.userInformation['employment_status'] != 'Others') ...[
+                        SizedBox(
+                            height: MediaQuery.of(context).size.width > 600
+                                ? 20
+                                : 16),
+                        if (information['employment_status'] != 'Others') ...[
                           _buildDropdownQuestion(
-                            title: 'Your first job aligns with your current job',
+                            title:
+                                'Your first job aligns with your current job',
                             controllerKey: 'job_alignment',
                             options: _likertScaleOptions,
                           ),
-                          SizedBox(height: MediaQuery.of(context).size.width > 600 ? 20 : 16),
+                          SizedBox(
+                              height: MediaQuery.of(context).size.width > 600
+                                  ? 20
+                                  : 16),
                           _buildDropdownQuestion(
-                            title: 'The program you took in OLOPSC matches your current job.',
+                            title:
+                                'The program you took in OLOPSC matches your current job.',
                             controllerKey: 'program_match',
                             options: _likertScaleOptions,
                           ),
-                          SizedBox(height: MediaQuery.of(context).size.width > 600 ? 20 : 16),
+                          SizedBox(
+                              height: MediaQuery.of(context).size.width > 600
+                                  ? 20
+                                  : 16),
                           _buildDropdownQuestion(
                             title: 'You are satisfied with your current job.',
                             controllerKey: 'job_satisfaction',
                             options: _likertScaleOptions,
                           ),
-                          SizedBox(height: MediaQuery.of(context).size.width > 600 ? 20 : 16),
+                          SizedBox(
+                              height: MediaQuery.of(context).size.width > 600
+                                  ? 20
+                                  : 16),
                         ],
-                        SizedBox(height: MediaQuery.of(context).size.width > 600 ? 30 : 20),
+                        SizedBox(
+                            height: MediaQuery.of(context).size.width > 600
+                                ? 30
+                                : 20),
                         ElevatedButton(
-                          onPressed: _selectedSkillsCount >= _kMinSkillSelections && !_isSubmitting
-                              ? _submitForm
-                              : null,
+                          onPressed:
+                              _selectedSkillsCount >= _kMinSkillSelections &&
+                                      !_isSubmitting
+                                  ? _submitForm
+                                  : null,
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color.fromRGBO(11, 10, 95, 1),
+                            backgroundColor:
+                                const Color.fromRGBO(11, 10, 95, 1),
                             minimumSize: Size(
                               double.infinity,
                               MediaQuery.of(context).size.width > 600 ? 50 : 40,
                             ),
                           ),
                           child: _isSubmitting
-                              ? const CircularProgressIndicator(color: Colors.white)
+                              ? const CircularProgressIndicator(
+                                  color: Colors.white)
                               : Text(
                                   'SUBMIT',
                                   style: TextStyle(
                                     color: Color.fromARGB(255, 253, 216, 83),
-                                    fontSize: MediaQuery.of(context).size.width > 600 ? 16 : 14,
+                                    fontSize:
+                                        MediaQuery.of(context).size.width > 600
+                                            ? 16
+                                            : 14,
                                   ),
                                 ),
                         ),

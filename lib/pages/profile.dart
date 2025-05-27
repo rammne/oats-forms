@@ -4,6 +4,7 @@ import 'package:alumni/compontents/question_card.dart';
 import 'package:alumni/compontents/answer_card.dart';
 import 'package:flutter/material.dart';
 import 'package:alumni/services/firebase.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ProfileScreen extends StatelessWidget {
   final String docID;
@@ -23,25 +24,24 @@ class ProfileScreen extends StatelessWidget {
               return const Center(child: CircularProgressIndicator());
             }
 
-            final alumniData = snapshot.data!;
+            final doc = snapshot.data!;
+            final alumniData = doc.data() as Map<String, dynamic>;
+            final docId = doc.id;
             return Container(
-              decoration: BoxDecoration(
-                  image: DecorationImage(
-                colorFilter: ColorFilter.mode(const Color.fromARGB(100, 0, 0, 0), BlendMode.srcATop),
-                image: NetworkImage(
-                    'https://lh3.googleusercontent.com/d/1ZFqS4S9ZdUdUAL1Vl2yLKeNkBMcpsLDU'
-                    ),
-                    opacity: 0.25,
-              )
-              ),
-              child: CustomScrollView(
-                slivers: [
-                  _buildAppBar(context, alumniData),
-                  
-                  _buildProfileContent(alumniData),
-                ],
-              ),
-            );
+                decoration: BoxDecoration(
+                    image: DecorationImage(
+                  colorFilter: ColorFilter.mode(
+                      const Color.fromARGB(100, 0, 0, 0), BlendMode.srcATop),
+                  image: NetworkImage(
+                      'https://lh3.googleusercontent.com/d/1ZFqS4S9ZdUdUAL1Vl2yLKeNkBMcpsLDU'),
+                  opacity: 0.25,
+                )),
+                child: CustomScrollView(
+                  slivers: [
+                    _buildAppBar(context, alumniData),
+                    _buildProfileContent(alumniData, docId),
+                  ],
+                ));
           },
         ),
       ),
@@ -69,24 +69,24 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
-  SliverList _buildProfileContent(dynamic alumniData) {
+  SliverList _buildProfileContent(dynamic alumniData, String docId) {
     return SliverList(
       delegate: SliverChildListDelegate([
         LayoutBuilder(
           builder: (context, constraints) {
             // If width is less than 600, use vertical layout
             if (constraints.maxWidth < 600) {
-              return _buildVerticalLayout(alumniData);
+              return _buildVerticalLayout(alumniData, docId);
             }
             // Otherwise, use horizontal layout
-            return _buildHorizontalLayout(alumniData);
+            return _buildHorizontalLayout(alumniData, docId);
           },
         ),
       ]),
     );
   }
 
-  Widget _buildHorizontalLayout(dynamic alumniData) {
+  Widget _buildHorizontalLayout(dynamic alumniData, String docId) {
     return Row(
       crossAxisAlignment:
           CrossAxisAlignment.start, // Aligns children at the top
@@ -107,7 +107,7 @@ class ProfileScreen extends StatelessWidget {
             ),
             child: Padding(
               padding: const EdgeInsets.all(20),
-              child: ProfileSection(alumniData),
+              child: ProfileSection(alumniData: alumniData, docId: docId),
             ),
           ),
         ),
@@ -135,7 +135,7 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildVerticalLayout(dynamic alumniData) {
+  Widget _buildVerticalLayout(dynamic alumniData, String docId) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -154,7 +154,7 @@ class ProfileScreen extends StatelessWidget {
           ),
           child: Padding(
             padding: const EdgeInsets.all(20),
-            child: ProfileSection(alumniData),
+            child: ProfileSection(alumniData: alumniData, docId: docId),
           ),
         ),
         const SizedBox(height: 16),
@@ -182,9 +182,10 @@ class ProfileScreen extends StatelessWidget {
 }
 
 class ProfileSection extends StatelessWidget {
-  final dynamic alumniData;
+  final Map<String, dynamic> alumniData;
+  final String docId;
 
-  ProfileSection(this.alumniData);
+  const ProfileSection({required this.alumniData, required this.docId});
 
   @override
   Widget build(BuildContext context) {
@@ -201,33 +202,114 @@ class ProfileSection extends StatelessWidget {
         ),
         const SizedBox(height: 16),
         ProfileInfoTile(
-          label: 'Full Name',
-          value:
-              '${alumniData['first_name']} ${alumniData['middle_name']} ${alumniData['last_name']}',
+          label: 'ID',
+          value: alumniData['alumni_id'] ?? '',
+          onChanged: (val) async {
+            alumniData['alumni_id'] = val;
+            await FirebaseFirestore.instance
+                .collection('alumni')
+                .doc(docId)
+                .update({'alumni_id': val});
+          },
+        ),
+        ProfileInfoTile(
+          label: 'First Name',
+          value: alumniData['first_name'] ?? '',
+          onChanged: (val) async {
+            alumniData['first_name'] = val;
+            await FirebaseFirestore.instance
+                .collection('alumni')
+                .doc(docId)
+                .update({'first_name': val});
+          },
+        ),
+        ProfileInfoTile(
+          label: 'Middle Name',
+          value: alumniData['middle_name'] ?? '',
+          onChanged: (val) async {
+            alumniData['middle_name'] = val;
+            await FirebaseFirestore.instance
+                .collection('alumni')
+                .doc(docId)
+                .update({'middle_name': val});
+          },
+        ),
+        ProfileInfoTile(
+          label: 'Last Name',
+          value: alumniData['last_name'] ?? '',
+          onChanged: (val) async {
+            alumniData['last_name'] = val;
+            await FirebaseFirestore.instance
+                .collection('alumni')
+                .doc(docId)
+                .update({'last_name': val});
+          },
         ),
         ProfileInfoTile(
           label: 'Degree',
           value: alumniData['degree'],
+          onChanged: (val) async {
+            alumniData['degree'] = val;
+            await FirebaseFirestore.instance
+                .collection('alumni')
+                .doc(docId)
+                .update({'degree': val});
+          },
         ),
         ProfileInfoTile(
           label: 'Email',
           value: alumniData['email'],
+          onChanged: (val) async {
+            alumniData['email'] = val;
+            await FirebaseFirestore.instance
+                .collection('alumni')
+                .doc(docId)
+                .update({'email': val});
+          },
         ),
         ProfileInfoTile(
           label: 'Date of Birth',
           value: alumniData['date_of_birth'],
+          onChanged: (val) async {
+            alumniData['date_of_birth'] = val;
+            await FirebaseFirestore.instance
+                .collection('alumni')
+                .doc(docId)
+                .update({'date_of_birth': val});
+          },
         ),
         ProfileInfoTile(
           label: 'Year Graduated',
           value: alumniData['year_graduated'],
+          onChanged: (val) async {
+            alumniData['year_graduated'] = val;
+            await FirebaseFirestore.instance
+                .collection('alumni')
+                .doc(docId)
+                .update({'year_graduated': val});
+          },
         ),
         ProfileInfoTile(
           label: 'Employment Status',
           value: alumniData['employment_status'],
+          onChanged: (val) async {
+            alumniData['employment_status'] = val;
+            await FirebaseFirestore.instance
+                .collection('alumni')
+                .doc(docId)
+                .update({'employment_status': val});
+          },
         ),
         ProfileInfoTile(
           label: 'Occupation',
           value: alumniData['occupation'],
+          onChanged: (val) async {
+            alumniData['occupation'] = val;
+            await FirebaseFirestore.instance
+                .collection('alumni')
+                .doc(docId)
+                .update({'occupation': val});
+          },
         ),
       ],
     );
@@ -266,18 +348,17 @@ class AlumniFeedbackSection extends StatelessWidget {
         ),
         Align(
             alignment: Alignment.centerRight,
-            child:   
-            Column(
+            child: Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Text(
-                      "${alumniData['first_name']} ${alumniData['last_name']}",
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.black,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
+                  "${alumniData['first_name']} ${alumniData['last_name']}",
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.black,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
                 Container(
                     margin: EdgeInsets.symmetric(vertical: 8),
                     padding: EdgeInsets.all(12),
@@ -358,13 +439,13 @@ class AlumniFeedbackSection extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               Text(
-                      "${alumniData['first_name']} ${alumniData['last_name']}",
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.black,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
+                "${alumniData['first_name']} ${alumniData['last_name']}",
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Colors.black,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
               AnswerCard(
                 answer: alumniData['question_3'],
               ),
@@ -389,13 +470,13 @@ class AlumniFeedbackSection extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               Text(
-                      "${alumniData['first_name']} ${alumniData['last_name']}",
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.black,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
+                "${alumniData['first_name']} ${alumniData['last_name']}",
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Colors.black,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
               AnswerCard(
                 answer: alumniData['question_4'],
               ),
@@ -419,13 +500,13 @@ class AlumniFeedbackSection extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               Text(
-                      "${alumniData['first_name']} ${alumniData['last_name']}",
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.black,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
+                "${alumniData['first_name']} ${alumniData['last_name']}",
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Colors.black,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
               AnswerCard(
                 answer: alumniData['question_5'],
               ),
@@ -449,13 +530,13 @@ class AlumniFeedbackSection extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               Text(
-                      "${alumniData['first_name']} ${alumniData['last_name']}",
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.black,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
+                "${alumniData['first_name']} ${alumniData['last_name']}",
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Colors.black,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
               AnswerCard(
                 answer: alumniData['question_6'],
               ),

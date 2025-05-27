@@ -48,16 +48,20 @@ class _HomePageState extends State<HomePage> {
     super.initState();
     // Initialize all controllers
     final controllerKeys = [
-      'firstName',
-      'lastName',
-      'middleName',
+      // 'firstName', // Removed
+      // 'lastName', // Removed
+      // 'middleName', // Removed
       'email',
       'dateOfBirth',
       'yearGraduated',
       'sex',
       'program',
       'employmentStatus',
-      'occupation'
+      'occupation',
+      'alumniID', // Add alumniID for saving
+      'firstName', // Add for saving, but not shown in form
+      'middleName', // Add for saving, but not shown in form
+      'lastName', // Add for saving, but not shown in form
     ];
 
     for (var key in controllerKeys) {
@@ -76,6 +80,7 @@ class _HomePageState extends State<HomePage> {
     if (_formKey.currentState!.validate()) {
       // Prepare user information map
       final userInfo = {
+        'alumni_id': _controllers['alumniID']!.text,
         'first_name': _controllers['firstName']!.text,
         'last_name': _controllers['lastName']!.text,
         'middle_name': _controllers['middleName']!.text,
@@ -90,11 +95,10 @@ class _HomePageState extends State<HomePage> {
       };
 
       // Navigate to next page
-      Navigator.push(
+      Navigator.pushNamed(
         context,
-        MaterialPageRoute(
-          builder: (context) => AlumniTrackingForm(userInformation: userInfo),
-        ),
+        'questions',
+        arguments: userInfo,
       );
     }
   }
@@ -142,53 +146,6 @@ class _HomePageState extends State<HomePage> {
       key: _formKey,
       child: Column(
         children: [
-          // Name Fields
-          if (!isMobile)
-            Row(
-              children: [
-                Expanded(
-                  child: CustomFormField(
-                    controller: _controllers['firstName']!,
-                    label: 'First Name',
-                    validator: (value) =>
-                        value!.isEmpty ? 'First name is required' : null,
-                  ),
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: CustomFormField(
-                    controller: _controllers['lastName']!,
-                    label: 'Last Name',
-                    validator: (value) =>
-                        value!.isEmpty ? 'Last name is required' : null,
-                  ),
-                ),
-              ],
-            )
-          else ...[
-            CustomFormField(
-              controller: _controllers['firstName']!,
-              label: 'First Name',
-              validator: (value) =>
-                  value!.isEmpty ? 'First name is required' : null,
-            ),
-            const SizedBox(height: 15),
-            CustomFormField(
-              controller: _controllers['lastName']!,
-              label: 'Last Name',
-              validator: (value) =>
-                  value!.isEmpty ? 'Last name is required' : null,
-            ),
-          ],
-          const SizedBox(height: 15),
-
-          // Middle Name
-          CustomFormField(
-            controller: _controllers['middleName']!,
-            label: 'Middle Name',
-          ),
-          const SizedBox(height: 15),
-
           // Email
           CustomFormField(
             controller: _controllers['email']!,
@@ -199,6 +156,14 @@ class _HomePageState extends State<HomePage> {
               final emailRegex = RegExp(r'^[^@]+@[^@]+\.[^@]+$');
               return !emailRegex.hasMatch(value) ? 'Enter a valid email' : null;
             },
+          ),
+          const SizedBox(height: 15),
+
+          // AlumniID (readonly, filled from welcome page)
+          CustomFormField(
+            controller: _controllers['alumniID']!,
+            label: 'Alumni ID',
+            readOnly: true,
           ),
           const SizedBox(height: 15),
 
@@ -233,8 +198,7 @@ class _HomePageState extends State<HomePage> {
 
           // Sex Dropdown
           DropdownButtonFormField2(
-            decoration:  _dropdownDecoration('Sex'),
-            
+            decoration: _dropdownDecoration('Sex'),
             items: _dropdownData['sex']!
                 .map((item) => DropdownMenuItem(
                       value: item,
@@ -332,8 +296,27 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  void _setCredentialsFromWelcomePage(BuildContext context) {
+    final args = ModalRoute.of(context)?.settings.arguments;
+    if (args is Map) {
+      if (args['alumni_id'] != null) {
+        _controllers['alumniID']?.text = args['alumni_id'];
+      }
+      if (args['first_name'] != null) {
+        _controllers['firstName']?.text = args['first_name'];
+      }
+      if (args['middle_name'] != null) {
+        _controllers['middleName']?.text = args['middle_name'];
+      }
+      if (args['last_name'] != null) {
+        _controllers['lastName']?.text = args['last_name'];
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    _setCredentialsFromWelcomePage(context);
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 253, 216, 83),
       appBar: AppBar(

@@ -39,13 +39,20 @@ const _navBarItems = [
 
 class _NavigationPageState extends State<NavigationPage> {
   int _selectedIndex = 0;
-  late final String documentID;
+  late String documentID;
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     documentID = widget.docID;
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (documentID.isEmpty && ModalRoute.of(context)?.settings.arguments != null) {
+      documentID = ModalRoute.of(context)!.settings.arguments as String;
+    }
   }
 
   //Scrolling through pages
