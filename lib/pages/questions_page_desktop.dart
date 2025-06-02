@@ -26,12 +26,6 @@ class _AlumniTrackingFormState extends State<AlumniTrackingForm> {
   // Form Controllers
   late Map<String, TextEditingController> _questionControllers;
 
-  late Map<String, int> _question1Stats;
-  late Map<String, int> _question2Stats;
-  late Map<String, int> _question3Stats;
-  late Map<String, int> _question5Stats;
-  late Map<String, int> _question6Stats;
-
   // Alumni reference
   final FirestoreService alumni = FirestoreService();
 
@@ -123,41 +117,6 @@ class _AlumniTrackingFormState extends State<AlumniTrackingForm> {
       'employment_duration': TextEditingController(),
       'program_match': TextEditingController(),
       'job_satisfaction': TextEditingController(),
-    };
-    _question1Stats = {
-      'strongly_agree': 0,
-      'agree': 0,
-      'neutral': 0,
-      'disagree': 0,
-      'strongly_disagree': 0,
-    };
-    _question2Stats = {
-      'strongly_agree': 0,
-      'agree': 0,
-      'neutral': 0,
-      'disagree': 0,
-      'strongly_disagree': 0,
-    };
-    _question3Stats = {
-      'strongly_agree': 0,
-      'agree': 0,
-      'neutral': 0,
-      'disagree': 0,
-      'strongly_disagree': 0,
-    };
-    _question5Stats = {
-      'strongly_agree': 0,
-      'agree': 0,
-      'neutral': 0,
-      'disagree': 0,
-      'strongly_disagree': 0,
-    };
-    _question6Stats = {
-      'strongly_agree': 0,
-      'agree': 0,
-      'neutral': 0,
-      'disagree': 0,
-      'strongly_disagree': 0,
     };
   }
 
@@ -299,6 +258,28 @@ class _AlumniTrackingFormState extends State<AlumniTrackingForm> {
     );
   }
 
+  // Helper to increment per-program answer counts for each question
+  Future<void> _incrementQuestionResponse({
+    required String questionCollection,
+    required String program,
+    required String answer,
+  }) async {
+    final docRef = FirebaseFirestore.instance.collection(questionCollection).doc(program);
+    await FirebaseFirestore.instance.runTransaction((transaction) async {
+      final snapshot = await transaction.get(docRef);
+      Map<String, dynamic> data = snapshot.exists ? snapshot.data() as Map<String, dynamic> : {};
+      // For question_1, initialize all skills to 0 if document does not exist
+      if (questionCollection == 'question_1' && !snapshot.exists) {
+        for (final skill in _skillsMap.keys) {
+          data[skill] = 0;
+        }
+      }
+      final updatedData = Map<String, int>.from(data.map((k, v) => MapEntry(k, v is int ? v : 0)));
+      updatedData[answer] = (updatedData[answer] ?? 0) + 1;
+      transaction.set(docRef, updatedData, SetOptions(merge: true));
+    });
+  }
+
   Future<void> _submitForm() async {
     if (!_formKey.currentState!.validate()) return;
 
@@ -316,13 +297,47 @@ class _AlumniTrackingFormState extends State<AlumniTrackingForm> {
         },
       );
 
-      await _updateQuestion1Stats();
       await _setAlumniDocument(document);
       await _updateYearStats();
-      await _updateQuestionStats('question_2', _question2Stats);
-      await _updateQuestionStats('question_3', _question3Stats);
-      await _updateQuestionStats('question_5', _question5Stats);
-      await _updateQuestionStats('question_6', _question6Stats);
+
+      final program = information['degree'];
+
+      // Q1: For each selected skill, increment the count for that skill in the program document
+      for (final skill in _alumniSkills) {
+        await _incrementQuestionResponse(
+          questionCollection: 'question_1',
+          program: program,
+          answer: skill,
+        );
+      }
+
+      // Q2
+      await _incrementQuestionResponse(
+        questionCollection: 'question_2',
+        program: program,
+        answer: _questionControllers['skill_impact']!.text,
+      );
+
+      // Q3
+      await _incrementQuestionResponse(
+        questionCollection: 'question_3',
+        program: program,
+        answer: _questionControllers['job_alignment']!.text,
+      );
+
+      // Q5
+      await _incrementQuestionResponse(
+        questionCollection: 'question_5',
+        program: program,
+        answer: _questionControllers['program_match']!.text,
+      );
+
+      // Q6
+      await _incrementQuestionResponse(
+        questionCollection: 'question_6',
+        program: program,
+        answer: _questionControllers['job_satisfaction']!.text,
+      );
 
       Navigator.pushReplacementNamed(
         context,
@@ -403,51 +418,6 @@ class _AlumniTrackingFormState extends State<AlumniTrackingForm> {
       }
     } catch (e) {
       print('Error updating year stats: $e');
-    }
-  }
-
-  // Function to update the stats of the alumni from question 1
-  Future<void> _updateQuestion1Stats() async {
-    try {
-      final CollectionReference collectionRef =
-          FirebaseFirestore.instance.collection('question_1');
-
-      for (String skill in _alumniSkills) {
-        final DocumentReference skillDoc = collectionRef.doc(skill);
-
-        final DocumentSnapshot skillSnapshot = await skillDoc.get();
-
-        if (skillSnapshot.exists) {
-          await skillDoc.update({
-            'count': (skillSnapshot.data() as Map<String, dynamic>)['count'] + 1
-          });
-        }
-      }
-    } catch (e) {
-      print('Error updating question 1 stats: $e');
-    }
-  }
-
-  // Function to update question statistics (for question_2, question_3, etc.)
-  Future<void> _updateQuestionStats(
-      String questionId, Map<String, int> stats) async {
-    try {
-      final DocumentReference collectionRef = FirebaseFirestore.instance
-          .collection(questionId)
-          .doc(information['degree']);
-      final DocumentSnapshot qDoc = await collectionRef.get();
-
-      collectionRef.update({
-        'strongly_agree': qDoc.get('strongly_agree') + stats['strongly_agree'],
-        'agree': qDoc.get('agree') + stats['agree'],
-        'neutral': qDoc.get('neutral') + stats['neutral'],
-        'disagree': qDoc.get('disagree') + stats['disagree'],
-        'strongly_disagree':
-            qDoc.get('strongly_disagree') + stats['strongly_disagree'],
-      });
-      print('success3');
-    } catch (e) {
-      print('Error updating $questionId stats: ${e}');
     }
   }
 
